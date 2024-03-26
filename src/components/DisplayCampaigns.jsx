@@ -7,7 +7,9 @@ const DisplayCampaigns = ({ title, isLoading, campaigns }) => {
   const navigate = useNavigate();
 
   const handleNavigate = (campaign, index) => {
-    navigate(`/ballot-details/${campaign?.officialName}`, { state: { ...campaign, ballotId: index } });
+    const id=parseInt( campaign.ballotId.toString())
+    console.log(id);
+    navigate(`/ballot-details/${id}`, { state: {  ballotId: id } });
   }
   
   return (

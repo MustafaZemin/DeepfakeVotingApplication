@@ -2,14 +2,18 @@ import React, { useContext, createContext, useEffect, useState } from "react";
 import { ethers } from "ethers";
 import { votingAbi } from "../constants/ABI";
 import { useNavigate } from 'react-router-dom';
+import { getVideoInfo } from "youtube-video-exists";
+
 const StateContext = createContext();
 
 export const StateContextProvider = ({ children }) => {
     const [address, setAddress] = useState("");
     const [provider, setProvider] = useState(null);
     const [contract, setContract] = useState(null);
+    const [endVoteFlag, setEndVoteFlag] = useState(true)
     const history = useNavigate();
-
+    // 0x67B0A41f06D28c699E4b589Fe427A5e17b90472b
+    // 0x8c835497487F9e08cA59dd5B3799B428c5A0Ba3B
     useEffect(() => {
         async function connectAccount() {
             try {
@@ -19,11 +23,11 @@ export const StateContextProvider = ({ children }) => {
                     );
                     const signer = provider.getSigner();
                     const contract = new ethers.Contract(
-                        "0x67B0A41f06D28c699E4b589Fe427A5e17b90472b",
+                        "0x406165E1da05A9a4Eb5A6d44C667430b3efEC3Ed",
                         votingAbi,
                         signer
                     ); // Use your contract address here
-
+                    console.log(contract);
                     window.ethereum.on("accountsChanged", (newAccounts) => {
                         console.log(newAccounts[0]);
                         setAddress(newAccounts[0]);
@@ -51,48 +55,68 @@ export const StateContextProvider = ({ children }) => {
     }, []);
 
     const createBallot = async (officialName, proposal) => {
-        try {
+        
             const trx = await contract.createBallot(officialName, proposal);
             const receipt = await trx.wait();
             console.log("Transaction confirmed:", receipt);
             return receipt;
-        } catch (error) {
-            console.error("Error creating ballot:", error);
-        }
+        
     };
 
     const doVote = async (ballotId, choice, voterName) => {
-        const tex = await contract.doVote(ballotId, choice, voterName);
+        const trx = await contract.doVote(ballotId, choice, voterName);
         const receipt = await trx.wait();
-
         return receipt;
     };
 
+
     const endVote = async (ballotId) => {
-        try {
+        
             const trx = await contract.endVote(ballotId);
             const receipt = await trx.wait();
             return receipt;
-        } catch (error) {
-            console.error("Error ending vote:", error);
-        }
+        
     };
 
     const getBallot = async (id) => {
         try {
-            const ballot = await contract.ballots(id);
+            const ballot = await contract.getBallotDetails(id);
             return ballot;
         } catch (error) {
             console.log(error);
         }
     };
-
     const getAllBallotDetails = async () => {
         try {
             const ballots = await contract.getAllBallotDetails();
-            return ballots;
+            // Spread the array to create a new mutable array
+            const mutableBallots = [...ballots];
+            // Sort the ballots based on their state
+            const sortedBallots = mutableBallots.sort((a, b) => parseInt(a.state.toString()) - parseInt(b.state.toString()));
+            // Separate running and ended ballots
+            const runningBallots = sortedBallots.filter(ballot => parseInt(ballot.state.toString()) === 1);
+            const endedBallots = sortedBallots.filter(ballot => parseInt(ballot.state.toString()) === 2);
+            // Concatenate the two filtered arrays
+            const allBallots = [...runningBallots, ...endedBallots];
+            return allBallots;
         } catch (error) {
             console.error("Error fetching ballot details:", error);
+            return null;
+        }
+    };
+    
+    const getLeaderboard = async () => {
+        try {
+            const leaderboardData = await contract.getLeaderboard();
+            const addresses = leaderboardData[0];
+            const scores = leaderboardData[1];
+            // Return an array of objects containing addresses and scores
+            return addresses.map((address, index) => ({
+                address,
+                score: scores[index]
+            }));
+        } catch (error) {
+            console.error("Error fetching leaderboard:", error);
             return null;
         }
     };
@@ -127,14 +151,16 @@ export const StateContextProvider = ({ children }) => {
     const getUserBallots = async (address) => {
         try {
             const allBallots = await getAllBallotDetails();
-
-            const userBallot = await allBallots.filter((ballot) => {
-                console.log(typeof address);
-                console.log(typeof ballot.creator);
-                return ballot.creator == address;
-            });
-
-            return userBallot;
+            console.log("balots",allBallots);
+            const userBallots = [];
+            for (let i = 0; i < allBallots.length; i++) {
+                const ballot = allBallots[i];
+                if (ballot.creator === address) {
+                    userBallots.push(ballot);
+                }
+            }
+            console.log(userBallots);
+            return userBallots;
         } catch (error) {
             console.error("Error fetching user's specific ballot:", error);
             return null; // Return null in case of an error
@@ -214,6 +240,9 @@ export const StateContextProvider = ({ children }) => {
                 getAllBallotDetails,
                 getCredibilityPoints,
                 getResult,
+                setEndVoteFlag,
+                getLeaderboard,
+                endVoteFlag,
                 getVote,
                 totalBallots,
                 getBallot,

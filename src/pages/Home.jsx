@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { DisplayCampaigns } from '../components';
 import { useStateContext } from '../context'
+import LeaderboardPage from '../components/Leaderboard';
 
 const Home = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -24,11 +25,14 @@ const Home = () => {
   }, [address, contract]);
 
   return (
+    <>
     <DisplayCampaigns 
       title="All Ballots"
       isLoading={isLoading}
       campaigns={campaigns}
     />
+    <LeaderboardPage/>
+  </>
   )
 }
 

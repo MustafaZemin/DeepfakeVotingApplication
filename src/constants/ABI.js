@@ -1,5 +1,42 @@
 export const votingAbi=[
 	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_ballotOfficialName",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_proposal",
+				"type": "string"
+			}
+		],
+		"name": "createBallot",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "voter",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "newCredibility",
+				"type": "uint256"
+			}
+		],
+		"name": "CredibilityPointsAdjusted",
+		"type": "event"
+	},
+	{
 		"anonymous": false,
 		"inputs": [
 			{
@@ -17,6 +54,67 @@ export const votingAbi=[
 		],
 		"name": "CredibilityPointsAssigned",
 		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_ballotId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "_choice",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_voterName",
+				"type": "string"
+			}
+		],
+		"name": "doVote",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "voted",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_ballotId",
+				"type": "uint256"
+			}
+		],
+		"name": "endVote",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_ballotId",
+				"type": "uint256"
+			}
+		],
+		"name": "getFinalResult",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "finalResult",
+				"type": "string"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
 	},
 	{
 		"anonymous": false,
@@ -118,71 +216,16 @@ export const votingAbi=[
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "_ballotOfficialName",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_proposal",
-				"type": "string"
-			}
-		],
-		"name": "createBallot",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_ballotId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "string",
-				"name": "_choice",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_voterName",
-				"type": "string"
-			}
-		],
-		"name": "doVote",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "voted",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_ballotId",
-				"type": "uint256"
-			}
-		],
-		"name": "endVote",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"inputs": [],
 		"name": "getAllBallotDetails",
 		"outputs": [
 			{
 				"components": [
+					{
+						"internalType": "uint256",
+						"name": "ballotId",
+						"type": "uint256"
+					},
 					{
 						"internalType": "address",
 						"name": "creator",
@@ -212,11 +255,80 @@ export const votingAbi=[
 						"internalType": "enum Voting.State",
 						"name": "state",
 						"type": "uint8"
+					},
+					{
+						"internalType": "uint256",
+						"name": "creationTime",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "result",
+						"type": "string"
 					}
 				],
 				"internalType": "struct Voting.BallotDetail[]",
 				"name": "",
 				"type": "tuple[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_ballotId",
+				"type": "uint256"
+			}
+		],
+		"name": "getBallotDetails",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "creator",
+				"type": "address"
+			},
+			{
+				"internalType": "string",
+				"name": "officialName",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "proposal",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "totalVoter",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "totalVote",
+				"type": "uint256"
+			},
+			{
+				"internalType": "enum Voting.State",
+				"name": "state",
+				"type": "uint8"
+			},
+			{
+				"internalType": "uint256",
+				"name": "creationTime",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "result",
+				"type": "string"
+			},
+			{
+				"internalType": "bool",
+				"name": "voteEnd",
+				"type": "bool"
 			}
 		],
 		"stateMutability": "view",
@@ -242,19 +354,18 @@ export const votingAbi=[
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_ballotId",
-				"type": "uint256"
-			}
-		],
-		"name": "getResult",
+		"inputs": [],
+		"name": "getLeaderboard",
 		"outputs": [
 			{
-				"internalType": "string",
+				"internalType": "address[10]",
 				"name": "",
-				"type": "string"
+				"type": "address[10]"
+			},
+			{
+				"internalType": "uint256[10]",
+				"name": "",
+				"type": "uint256[10]"
 			}
 		],
 		"stateMutability": "view",

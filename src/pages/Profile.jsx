@@ -1,26 +1,30 @@
-import React, { useState, useEffect } from 'react'
-
+import React, { useState, useEffect } from 'react';
 import { DisplayCampaigns } from '../components';
-import { useStateContext } from '../context'
+import { useStateContext } from '../context';
 
 const Profile = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [campaigns, setCampaigns] = useState([]);
-
-  const { address, contract, getUserBallots } = useStateContext();
-
-  const fetchCampaigns = async () => {
-    setIsLoading(true);
-    const data = await getUserBallots(address);
-    
-    console.log(data);
-    setCampaigns(data);
-    setIsLoading(false);
-  }
+  const { address, getUserBallots, getAllBallotDetails,contract } = useStateContext();
 
   useEffect(() => {
-    if(contract) fetchCampaigns();
-  }, [address, contract]);
+    if (address !=undefined) {
+        const fetchOwnerBallots = async () => {
+            setIsLoading(true);
+            try {
+                const data = await getUserBallots(address);
+                console.log(data);
+                setCampaigns(data);
+            } catch (error) {
+                console.error("Error fetching user's specific ballot:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchOwnerBallots();
+    }
+}, [address, contract]);
+
 
   return (
     <DisplayCampaigns 
@@ -28,7 +32,7 @@ const Profile = () => {
       isLoading={isLoading}
       campaigns={campaigns}
     />
-  )
-}
+  );
+};
 
-export default Profile
+export default Profile;

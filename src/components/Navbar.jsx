@@ -10,16 +10,22 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [isActive, setIsActive] = useState('dashboard');
   const [toggleDrawer, setToggleDrawer] = useState(false);
-  const { connect, address, getCredibilityPoints } = useStateContext();
+  const { connect, address, getCredibilityPoints,endVoteFlag } = useStateContext();
   const [credibilityPoints, setCredibilityPoints] = useState(null);
 
   useEffect(() => {
     const fetchCredibilityPoints = async () => {
       try {
         if (address) {
-          const points = await getCredibilityPoints(address); // Pass user's address to getCredibilityPoints function
-          setCredibilityPoints(parseFloat(points.toString())/1000)
-
+          const points = await getCredibilityPoints(address);
+          
+          if(parseFloat(points.toString())===1){
+            setCredibilityPoints(1)
+          }
+          else{         
+             setCredibilityPoints(parseFloat(points.toString())/1000)
+        }
+        console.log(points);
         }
       } catch (error) {
         console.error('Error fetching credibility points:', error);
@@ -27,7 +33,7 @@ const Navbar = () => {
     };
 
     fetchCredibilityPoints();
-  }, [address]); // Fetch credibility points whenever the user's address changes
+  }, [address,endVoteFlag]); 
 
   return (
     <div className="flex md:flex-row flex-col-reverse justify-between  mb-[32px] gap-6">

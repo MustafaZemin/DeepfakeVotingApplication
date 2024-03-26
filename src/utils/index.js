@@ -1,9 +1,18 @@
+import { getVideoInfo } from "youtube-video-exists";
+
 export const daysLeft = (deadline) => {
   const millisecondsPerDay = 1000 * 3600 * 24;
   const remainingDays = deadline / millisecondsPerDay;
   console.log(remainingDays.toFixed(0));
 
   return remainingDays.toFixed(0);
+};
+
+export const ValidateYotubeVideo = async (url) => {
+  const id =getYouTubeVideoId(url)
+  const a = await getVideoInfo(id);
+  return a.existing
+  
 };
 
 export const calculateTimeLeft = (creationTime) => {

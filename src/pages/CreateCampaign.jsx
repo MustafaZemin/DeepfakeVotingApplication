@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useStateContext } from '../context';
 import { CustomButton, FormField, Loader } from '../components';
 import toast from 'react-hot-toast';
-import { money } from '../assets';
+import { ValidateYotubeVideo } from '../utils';
+
 
 const CreateCampaign = () => {
   const navigate = useNavigate();
@@ -27,8 +28,13 @@ const CreateCampaign = () => {
       toast.error('Please enter a valid YouTube video link.');
       return;
     }
+    const validate = await ValidateYotubeVideo(form.proposal)
+    if(!validate){
+      toast.error("This Youtube video does not exit. Please Enter a correct link")
+      return;
+    }
 
-    setIsLoading(true);
+    setIsLoading(true); 
     try {
       await createBallot(form.officialName, form.proposal);
 
@@ -36,7 +42,8 @@ const CreateCampaign = () => {
       navigate('/');
     } catch (error) {
       console.error('Error creating ballot:', error);
-      toast.error('Failed to create ballot. Please try again later.');
+      toast.error('Failed to create ballot.');
+
     }
     setIsLoading(false);
   };
