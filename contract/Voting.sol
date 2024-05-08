@@ -44,7 +44,7 @@ contract Voting {
     event VoteEnded(uint256 ballotId);
     event VoteDone(uint256 ballotId, address voter);
     event CredibilityPointsAssigned(address voter, uint256 points);
-    uint256 constant VOTING_DURATION = 2 days;
+    uint256 constant VOTING_DURATION = 20 days;
     event CredibilityPointsAdjusted(address voter, uint256 newCredibility);
 
     function getVote(uint256 _ballotId, string memory _choice)
