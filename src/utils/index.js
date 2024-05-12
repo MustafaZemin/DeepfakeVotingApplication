@@ -9,10 +9,13 @@ export const daysLeft = (deadline) => {
 };
 
 export const ValidateYotubeVideo = async (url) => {
-  const id =getYouTubeVideoId(url)
-  const a = await getVideoInfo(id);
-  return a.existing
+  const id = getYouTubeVideoId(url);
+  const videoInfo = await getVideoInfo(id);
   
+  // Check if the video exists and is not private
+  const isValid = videoInfo?.existing && !videoInfo?.private;
+
+  return isValid;
 };
 
 export const calculateTimeLeft = (creationTime) => {
