@@ -21,18 +21,21 @@ const CreateCampaign = () => {
     setForm({ ...form, [fieldName]: e.target.value });
   };
 
-    const handleSubmit = async (e) => {
+     const handleSubmit = async (e) => {
     e.preventDefault();
+
 
     if (!form.proposal.match(youtubeUrlRegex)) {
       toast.error('Please enter a valid YouTube video link.');
       return;
     }
-    
-    const validate = await ValidateYotubeVideo(form.proposal)
-    if(!validate){
-      toast.error("This Youtube video does not exist. Please Enter a correct link")
-      return;
+
+    if (!form.proposal.includes("/shorts/")){
+      const validate = await ValidateYotubeVideo(form.proposal)
+      if(!validate){
+        toast.error("This Youtube video does not exist. Please Enter a correct link")
+        return;
+      }
     }
 
     setIsLoading(true); 
@@ -48,7 +51,6 @@ const CreateCampaign = () => {
     }
     setIsLoading(false);
   };
-
   return (
     <div className="bg-gray-100 flex justify-center items-center flex-col rounded-[10px] sm:p-10 p-4">
       {isLoading && <Loader />}
