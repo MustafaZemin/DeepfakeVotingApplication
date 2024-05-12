@@ -15,7 +15,7 @@ const CreateCampaign = () => {
     proposal: '',
   });
 
-  const youtubeUrlRegex = /^(https?\:\/\/)?(www\.youtube\.com|youtu\.?be)\/(?!.*(?:shorts)).+$/;
+  const youtubeUrlRegex = /^(https?\:\/\/)?(www\.youtube\.com|youtu\.?be)\/(?!shorts\/).+$/;
 
   const handleFormFieldChange = (fieldName, e) => {
     setForm({ ...form, [fieldName]: e.target.value });
