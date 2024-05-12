@@ -21,11 +21,17 @@ const CreateCampaign = () => {
     setForm({ ...form, [fieldName]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+    const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!form.proposal.match(youtubeUrlRegex)) {
       toast.error('Please enter a valid YouTube video link.');
+      return;
+    }
+    
+    const validate = await ValidateYotubeVideo(form.proposal)
+    if(!validate){
+      toast.error("This Youtube video does not exist. Please Enter a correct link")
       return;
     }
 
