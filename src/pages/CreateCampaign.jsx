@@ -31,6 +31,7 @@ const CreateCampaign = () => {
        // Check if the URL is a YouTube Shorts link
     if (form.proposal.includes("/shorts/")) {
       validate = true; // Treat YouTube Shorts links as valid
+      return validate;
     }else{
       const validate = await ValidateYotubeVideo(form.proposal)
     }
