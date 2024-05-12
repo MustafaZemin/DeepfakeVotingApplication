@@ -30,7 +30,7 @@ const CreateCampaign = () => {
     }
     const validate = await ValidateYotubeVideo(form.proposal)
     if(!validate){
-      toast.error("This Youtube video does not exit. Please Enter a correct link")
+      toast.error("This Youtube video does not exist. Please Enter a correct link")
       return;
     }
 
