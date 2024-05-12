@@ -9,13 +9,18 @@ export const daysLeft = (deadline) => {
 };
 
 export const ValidateYotubeVideo = async (url) => {
-  const id = getYouTubeVideoId(url);
-  const videoInfo = await getVideoInfo(id);
-  
-  // Check if the video exists and is not private
-  const isValid = videoInfo?.existing && !videoInfo?.private;
+    const id = getYouTubeVideoId(url);
 
-  return isValid;
+    // Check if the URL is a YouTube Shorts link
+    if (url.includes("/shorts/")) {
+        return true; // Treat YouTube Shorts links as valid
+    }
+
+    // For regular YouTube videos, check if the video exists and is not private
+    const videoInfo = await getVideoInfo(id);
+    const isValid = videoInfo?.existing && !videoInfo?.private;
+
+    return isValid;
 };
 
 export const calculateTimeLeft = (creationTime) => {
