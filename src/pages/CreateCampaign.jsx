@@ -29,8 +29,12 @@ const CreateCampaign = () => {
       return;
     }
     const validate = await ValidateYotubeVideo(form.proposal)
+    // Check if the URL is a YouTube Shorts link
+    if (form.proposal.includes("/shorts/")) {
+      validate = true; // Treat YouTube Shorts links as valid
+    }
     if(!validate){
-      toast.error("This Youtube video does not exist. Please Enter a correct link")
+      toast.error("This Youtube video does not exit. Please Enter a correct link")
       return;
     }
 
